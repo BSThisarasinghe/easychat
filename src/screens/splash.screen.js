@@ -1,24 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, StatusBar, StyleSheet } from 'react-native';
-import firebase from 'firebase';
-import { Footer, Logo } from '../cards';
+import { Logo, Footer } from '../components';
 
 class Splash extends Component {
 
     componentDidMount() {
         setTimeout(() => {
             const { navigate } = this.props.navigation;
-
-            firebase.auth().onAuthStateChanged(function (user) {
-                if (user) {
-                    // console.log(user);
-                    navigate('home');
-                } else {
-                    // console.log(user);
-                    navigate('login');
-                }
-            });
-            console.log("Splash");
+            navigate('login');
         }, 1000);
     }
 

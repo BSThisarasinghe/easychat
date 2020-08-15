@@ -9,8 +9,10 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import Splash from './src/screens/splash.screen';
 import Login from './src/screens/login.screen';
 import SignUp from './src/screens/sign-up.screen';
+import Dashboard from './src/screens/dashboard.screen';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +21,18 @@ class App extends Component {
     return (
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen
+            name="splash"
+            component={Splash}
+            options={{
+              title: '',
+              headerStyle: {
+                backgroundColor: 'transparent',
+                height: 0
+              },
+              headerLeft: null
+            }}
+          />
           <Stack.Screen
             name="login"
             component={Login}
@@ -40,6 +54,13 @@ class App extends Component {
                 backgroundColor: 'transparent',
                 height: 0
               },
+              headerLeft: null
+            }}
+          />
+          <Stack.Screen
+            name="dashboard"
+            component={Dashboard}
+            options={{
               headerLeft: null
             }}
           />

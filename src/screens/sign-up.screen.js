@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, BackHandler, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Button, Input, Spinner } from '../components';
+import { postRegister } from '../services/service.index';
 
 const regexName = /^[a-zA-Z\s]{0,}$/;
 const regexDn = /^[a-zA-Z]{0,}$/;
@@ -59,22 +60,6 @@ class SignUp extends Component {
             });
         }
 
-        if (this.state.display_name == "") {
-            this.setState({
-                dnBorder: 'red',
-                dnError: 'Display name is required',
-                dnValid: false
-            });
-        }
-
-        if (this.state.phone == "") {
-            this.setState({
-                mobileBorder: 'red',
-                mobileError: 'Display name is required',
-                mobileValid: false
-            });
-        }
-
         if (this.state.password == "") {
             this.setState({
                 passwordBorder: 'red',
@@ -91,8 +76,25 @@ class SignUp extends Component {
             });
         }
 
-        if (nameValid && emailValid && dnValid && mobileValid && passwordValid && cpValid) {
-            // this.props.registerUser({ name, email, password, cpwd, phone, display_name });
+        var requestData = {
+            "name": this.state.name,
+            "email": this.state.email,
+            "password": this.state.password
+        }
+
+        if (nameValid && emailValid && passwordValid && cpValid) {
+            postRegister(requestData).then((data) => {
+                console.log(JSON.stringify(data));
+                if(data.status === 201){
+                    this.setState({
+                        name: '',
+                        email: '',
+                        password: '',
+                        cpwd: ''
+                    });
+                    this.props.navigation.navigate('login');
+                }
+            });
         }
     }
 
@@ -337,32 +339,6 @@ class SignUp extends Component {
                             style={[styles.inputStyle, { borderColor: this.state.emailBorder }]}
                             secureTextEntry={false}
                             errorText={this.state.emailError}
-                        />
-                    </View>
-                    <View style={styles.cardSectionStyle}>
-                        <Input
-                            label="DISPLAY NAME"
-                            labelStyle={{ color: '#989898' }}
-                            placeholder="Mike"
-                            placeholderTextColor="#DBDDDE"
-                            onChangeText={display_name => this.onValidateDn(display_name)}
-                            value={this.state.display_name}
-                            style={[styles.inputStyle, { borderColor: this.state.dnBorder }]}
-                            secureTextEntry={false}
-                            errorText={this.state.dnError}
-                        />
-                    </View>
-                    <View style={styles.cardSectionStyle}>
-                        <Input
-                            label="MOBILE NUMBER"
-                            placeholder="077 555 5555"
-                            onChangeText={phone => this.onValidateMobile(phone)}
-                            value={this.state.phone}
-                            secureTextEntry={false}
-                            labelStyle={{ color: '#989898' }}
-                            placeholderTextColor="#DBDDDE"
-                            style={[styles.inputStyle, { borderColor: this.state.mobileBorder }]}
-                            errorText={this.state.mobileError}
                         />
                     </View>
                     <View style={styles.cardSectionStyle}>

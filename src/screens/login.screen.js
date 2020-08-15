@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, BackHandler, KeyboardAvoidingView, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { Button, Input, Spinner } from '../components';
+import { postLogin } from '../services/service.index';
 
 const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -17,25 +19,43 @@ class Login extends Component {
             passwordBorder: '#d8d8d8',
             emailValid: false,
             passwordValid: false,
+            auth: {
+                "message": "",
+                "token": "",
+                "user": {
+                    "id": 0,
+                    "name": "",
+                    "email": "",
+                    "status": 0
+                }
+            },
             autherror: ''
         };
     }
 
-    onChangeEmail(email){
+    onChangeEmail(email) {
         this.setState({
             email
         });
     }
 
-    onChangePassword(password){
+    onChangePassword(password) {
         this.setState({
             password
         });
     }
 
+    async storeAuthData(value) {
+        try {
+            await AsyncStorage.setItem('auth', value);
+        } catch (e) {
+            // saving error
+        }
+    }
+
     async onLogin() {
         const { email, password, emailValid, passwordValid } = this.state;
-
+        console.log("onLogin");
         if (this.state.email == "") {
             await this.setState({
                 emailBorder: 'red',
@@ -52,9 +72,25 @@ class Login extends Component {
             });
         }
 
-        if (emailValid && passwordValid) {
-            this.props.navigation.navigate('Profile');
+        var requestData = {
+            "email": this.state.email,
+            "password": this.state.password
         }
+
+        postLogin(requestData).then((data) => {
+            console.log(JSON.stringify(data));
+            if (data.status === 200) {
+                this.setState({
+                    email: '',
+                    password: '',
+                    auth: data.data
+                }, async function () {
+                    await this.storeAuthData(JSON.stringify(this.state.auth));
+                    this.props.navigation.navigate('dashboard');
+                });
+                // this.props.navigation.navigate('login');
+            }
+        });
 
         // console.log(user);
         // if(user !== null){
