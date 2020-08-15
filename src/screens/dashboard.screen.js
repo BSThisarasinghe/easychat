@@ -1,7 +1,7 @@
 // import _ from 'lodash';
 import React, { Component, createRef } from 'react';
 import { View, Text, Dimensions, FlatList, Image, UIManager, LayoutAnimation } from 'react-native';
-
+import AsyncStorage from '@react-native-community/async-storage';
 // const { width, height } = Dimensions.get('window');
 
 // const flatlist = createRef();
@@ -25,6 +25,17 @@ class Dashboard extends Component {
             showModal: false,
             approved: false
         };
+    }
+
+    async componentDidMount() {
+        var stringifiedToken = await AsyncStorage.getItem('auth');
+        var stringifiedTime = await AsyncStorage.getItem('expTime');
+
+        console.log("Dashboard");
+        console.log(stringifiedToken);
+        console.log(stringifiedTime);
+        console.log("Dashboard");
+
     }
 
     render() {

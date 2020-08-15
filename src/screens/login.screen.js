@@ -45,13 +45,22 @@ class Login extends Component {
         });
     }
 
-    async storeAuthData(value) {
+    async storeAuthData(auth, expTime) {
         try {
-            await AsyncStorage.setItem('auth', value);
+            await AsyncStorage.setItem('auth', auth);
+            await AsyncStorage.setItem('expTime', expTime);
         } catch (e) {
             // saving error
         }
     }
+
+    async storePassword(password) {
+        try {
+            await AsyncStorage.setItem('password', password);
+        } catch (e) {
+            // saving error
+        }
+    }    
 
     async onLogin() {
         const { email, password, emailValid, passwordValid } = this.state;
@@ -80,12 +89,16 @@ class Login extends Component {
         postLogin(requestData).then((data) => {
             console.log(JSON.stringify(data));
             if (data.status === 200) {
+                this.storePassword(this.state.password);
                 this.setState({
                     email: '',
                     password: '',
                     auth: data.data
                 }, async function () {
-                    await this.storeAuthData(JSON.stringify(this.state.auth));
+                    var currentTime = new Date();
+                    currentTime.setSeconds(currentTime.getSeconds() + 3600);
+                    
+                    await this.storeAuthData(JSON.stringify(this.state.auth), JSON.stringify(currentTime));
                     this.props.navigation.navigate('dashboard');
                 });
                 // this.props.navigation.navigate('login');

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import axiosInstance from '../../axiosInstance';
 import { URL } from '../../constants.config';
 
 const postRegister = (data) => {
