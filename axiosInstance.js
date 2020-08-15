@@ -18,7 +18,15 @@ axiosInstance.interceptors.request.use(async function (config) {
     expTime = JSON.parse(stringifiedTime);
     var currentTime = new Date();
 
-    if (auth.token && expTime > currentTime) {
+    console.log("###1");
+    console.log(auth.token);
+    console.log(new Date(expTime));
+    console.log(new Date(currentTime));
+    console.log(new Date(expTime) > new Date(currentTime));
+    console.log("###1");
+
+
+    if (auth.token && new Date(expTime) > new Date(currentTime)) {
         if (config.method !== 'OPTIONS') {
             console.log("Not expired");
             config.headers['Content-Type'] = 'application/json';

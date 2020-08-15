@@ -2,7 +2,8 @@
 import React, { Component, createRef } from 'react';
 import { View, Text, Dimensions, FlatList, Image, UIManager, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-// const { width, height } = Dimensions.get('window');
+import { getAllChats } from '../services/service.index';
+import { ChatItem } from '../components';
 
 // const flatlist = createRef();
 
@@ -11,37 +12,54 @@ class Dashboard extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            width: 1,
-            mapWidth: Dimensions.get('window').width - 30,
-            latitude: 6.927079,
-            longitude: 79.861244,
-            radius: 2000,
-            display_name: '',
-            mobile: '',
-            name: '',
-            listData: [],
-            showHeader: true,
-            loading: true,
-            showModal: false,
-            approved: false
+            auth: {},
+            allChats: []
         };
     }
 
-    async componentDidMount() {
-        var stringifiedToken = await AsyncStorage.getItem('auth');
-        var stringifiedTime = await AsyncStorage.getItem('expTime');
+    setAllChats() {
+        getAllChats().then((response) => {
+            if (response.status === 200) {
+                this.setState({
+                    allChats: response.data.sessions
+                }, function () {
+                    console.log(JSON.stringify(this.state.allChats));
+                });
+            }
+        });
+    }
 
-        console.log("Dashboard");
-        console.log(stringifiedToken);
-        console.log(stringifiedTime);
-        console.log("Dashboard");
+    componentDidMount() {
+        this.setAllChats();
+    }
 
+    renderListItem = ({ item }) => {
+        return (
+            <ChatItem
+                chatItem={item.contact.userData.name}
+            />
+        );
+    }
+
+    renderChatList() {
+        return (
+            <FlatList
+                data={this.state.allChats}
+                renderItem={this.renderListItem}
+                keyExtractor={(item, index) => index.toString()}
+                extraData={this.state}
+                scrollEnabled={true}
+                initialNumToRender={8}
+            // ref={ref => this.scrollView = ref}
+            // onEndReached={this.loadMoreCampaigns}
+            />
+        );
     }
 
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <Text>Dashboard</Text>
+                {this.renderChatList()}
             </View>
         );
     }

@@ -26,7 +26,19 @@ const postLogin = (data) => {
     });
 }
 
+const getAllChats = () => {
+    return axiosInstance({
+        method: 'get',
+        url: `${URL}/sessions`
+    }).then(function (response) {
+        return response;
+    }).catch(function (response) {
+        return response;
+    });
+}
+
 export {
     postRegister,
-    postLogin
+    postLogin,
+    getAllChats
 };
